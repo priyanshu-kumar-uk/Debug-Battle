@@ -40,6 +40,42 @@ inputs.addEventListener("input", () => {
 });
 
 
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+  const recognition = new SpeechRecognition();
+
+  recognition.continuous = false; 
+  recognition.lang = "en-US"; 
+  recognition.interimResults = false;
+
+  micBtn.addEventListener("click", () => {
+    recognition.start();
+    console.log("Listening...");
+  });
+
+  recognition.onresult = (event) => {
+    let voiceText = event.results[0][0].transcript;
+    console.log("You said:", voiceText);
+
+    inputs.value = voiceText; 
+
+    let searchText = voiceText.toLowerCase();
+
+    let filteredVideos = videos.filter(video =>
+      video.title.toLowerCase().includes(searchText)
+    );
+
+    data(filteredVideos);
+  };
+
+  recognition.onerror = (event) => {
+    console.error("Speech recognition error", event.error);
+  };
+
+} else {
+  alert("Your browser does not support Speech Recognition");
+}
 
 
 
